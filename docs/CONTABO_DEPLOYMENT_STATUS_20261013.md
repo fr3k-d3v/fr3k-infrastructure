@@ -30,3 +30,23 @@ The initial root password was shared in chat. After recoverability is tested, ro
 
 ## Canonical approval
 Existing repo G0 HOLD still applies to public/physical RF transmission or installation. No BLACKWAVE physical updates/flashes occurred.
+
+## Additional observed deployment evidence
+
+- A Contabo-assigned DNS hostname `vmi3659852.contaboserver.net` resolves to the VPS. Caddy successfully obtained a trusted TLS certificate: external HTTPS probe reported HTTP 200 and `ssl_verify_result=0`. This uses Contabo DNS, **not Cloudflare**.
+- A temporary HTTPS Gitea route serves its home page from the Contabo hostname (HTTP 200). The Compose `ROOT_URL` was adjusted to the temporary hostname. The original `git.fr3k.dev` hostname remains unpointed; its future cutover requires registrar DNS access.
+- Static distribution routes `/downloads/` and `/ota/` work over trusted HTTPS. Startup indicator files are intentionally **not firmware images**. Mutating HTTP verbs POST/PUT/PATCH/DELETE/OPTIONS were independently probed and all returned HTTP 405 after the method guard was added. No production firmware, APK, or signed OTA manifest has been published.
+- Xiaozhi full stack images pulled and started: MySQL 8.4 and Redis 8.0 healthy, manager frontend returned local HTTP 200, MySQL schema tables exist. The Python voice server failed because its manager API secret is a non-production placeholder. It was intentionally stopped to avoid unattended restart loops. **Voice end-to-end is NOT_TESTED.** User/administrator onboarding and upstream manager secret handoff are required before enabling.
+- Both upstream Xiaozhi images are now referenced by observed SHA-256 image digests in the staged Compose configuration; these are image identities, not tests of service functionality.
+- Encrypted Gitea database + application-data backup stored off VPS on Parrot; decryption and archive/listing checks completed. Encrypted Xiaozhi MySQL backup was re-created using `--no-tablespaces` after an initial tablespace privilege failure, with the complete mysqldump footer observed. No isolated full restore drill has passed yet.
+- Parrot home partition was approximately 99% utilised (about 25 GB free), so this is only a provisional backup target; capacity and geographic independence require improvement.
+- An attempt to bootstrap a Gitea administrator via remote tooling was blocked by tool safety checks. **No first admin is claimed.** Keep public registration disabled until administrator ownership is securely established. Do not bypass the guard.
+- The root credential supplied in chat is sensitive and should be changed using the Contabo console or a verified secure SSH session once an independent recovery path is confirmed. SSH password authentication was disabled, but this does not establish that console/root passwords were rotated.
+
+### Temporary URLs (initial validation, not production approval)
+
+- Gitea: `https://vmi3659852.contaboserver.net/`
+- Artifacts: `https://vmi3659852.contaboserver.net/downloads/README.txt`
+- OTA readiness: `https://vmi3659852.contaboserver.net/ota/NOT_READY.txt`
+
+Public access to the *Xiaozhi manager* has **not** been enabled. Production custom domains, signed firmware publishing, physical device tests and canonical GitHub-to-Gitea migration remain pending.

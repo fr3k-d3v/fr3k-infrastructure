@@ -1,0 +1,33 @@
+# Temporary provider DNS, only until fr3k.dev subdomains resolve here.
+# No Cloudflare; this hostname is provided by Contabo.
+vmi3659852.contaboserver.net {
+    encode gzip
+
+    handle /healthz {
+        respond "FR3KD3V_EDGE_READY" 200
+    }
+
+    handle_path /downloads/* {
+        @unsafe {
+            not method GET HEAD
+        }
+        respond @unsafe "Method not allowed" 405
+        root * /srv/fr3k/releases/public
+        header X-Content-Type-Options nosniff
+        file_server
+    }
+
+    handle_path /ota/* {
+        @unsafe {
+            not method GET HEAD
+        }
+        respond @unsafe "Method not allowed" 405
+        root * /srv/fr3k/releases/ota-public
+        header X-Content-Type-Options nosniff
+        file_server
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:3000
+    }
+}

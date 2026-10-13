@@ -35,7 +35,7 @@ services:
     mem_limit: 300m
     security_opt: [no-new-privileges:true]
   manager:
-    image: ghcr.io/xinnan-tech/xiaozhi-esp32-server:web_latest
+    image: ghcr.io/xinnan-tech/xiaozhi-esp32-server@sha256:f333e306f28f211ea91813fb49ab55b727d3fb4557d15f5b1280468f2fefc98f
     restart: unless-stopped
     depends_on:
       mysql:
@@ -58,7 +58,7 @@ services:
     mem_limit: 2g
     security_opt: [no-new-privileges:true]
   server:
-    image: ghcr.io/xinnan-tech/xiaozhi-esp32-server:server_latest
+    image: ghcr.io/xinnan-tech/xiaozhi-esp32-server@sha256:f3d2b204a3d04c99cce61228d8ae39f125e8c345f0fae4059446050fd754d48d
     restart: unless-stopped
     depends_on:
       mysql:

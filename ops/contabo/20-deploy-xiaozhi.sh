@@ -20,6 +20,8 @@ install -m0644 /tmp/compose-xiaozhi.yml /opt/fr3k-cloud/xiaozhi/compose.yml
 cd /opt/fr3k-cloud/xiaozhi
 docker compose --env-file /etc/fr3k-cloud/xiaozhi.env config --quiet
 docker compose --env-file /etc/fr3k-cloud/xiaozhi.env pull
-docker compose --env-file /etc/fr3k-cloud/xiaozhi.env up -d
+# Do not start the Python voice server before the admin-generated manager.secret is set.
+docker compose --env-file /etc/fr3k-cloud/xiaozhi.env up -d mysql redis manager
+docker compose --env-file /etc/fr3k-cloud/xiaozhi.env stop server || true
 docker compose --env-file /etc/fr3k-cloud/xiaozhi.env ps
-echo XIAOZHI_DEPLOY_STARTED_PENDING_ADMIN_AND_MODEL_SETUP
+echo XIAOZHI_MANAGER_READY_VOICE_WAITING_FOR_ADMIN_AND_MODEL_CONFIGURATION

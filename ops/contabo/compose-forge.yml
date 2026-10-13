@@ -35,8 +35,8 @@ services:
       GITEA__security__SECRET_KEY: ${GITEA_SECRET_KEY:?missing secret}
       GITEA__security__INTERNAL_TOKEN: ${GITEA_INTERNAL_TOKEN:?missing token}
       GITEA__server__LFS_JWT_SECRET: ${GITEA_LFS_SECRET:?missing secret}
-      GITEA__server__ROOT_URL: https://git.fr3k.dev/
-      GITEA__server__DOMAIN: git.fr3k.dev
+      GITEA__server__ROOT_URL: https://vmi3659852.contaboserver.net/
+      GITEA__server__DOMAIN: vmi3659852.contaboserver.net
       GITEA__server__PROTOCOL: http
       GITEA__server__HTTP_PORT: "3000"
       GITEA__server__DISABLE_SSH: "true"
