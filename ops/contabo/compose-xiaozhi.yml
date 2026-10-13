@@ -1,0 +1,80 @@
+name: fr3k-voice
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${XIAOZHI_DB_ROOT_PASSWORD:?missing}
+      MYSQL_DATABASE: xiaozhi_esp32_server
+      MYSQL_USER: xiaozhi
+      MYSQL_PASSWORD: ${XIAOZHI_DB_PASSWORD:?missing}
+      TZ: UTC
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - /srv/fr3k/xiaozhi/mysql:/var/lib/mysql
+    networks: [voice-private]
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost --silent"]
+      interval: 12s
+      timeout: 5s
+      retries: 20
+    mem_limit: 1500m
+    security_opt: [no-new-privileges:true]
+  redis:
+    image: redis:8.0-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "60", "1", "--appendonly", "yes", "--protected-mode", "yes"]
+    volumes:
+      - /srv/fr3k/xiaozhi/redis:/data
+    networks: [voice-private]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 4s
+      retries: 8
+    mem_limit: 300m
+    security_opt: [no-new-privileges:true]
+  manager:
+    image: ghcr.io/xinnan-tech/xiaozhi-esp32-server:web_latest
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      TZ: UTC
+      SPRING_DATASOURCE_DRUID_URL: "jdbc:mysql://mysql:3306/xiaozhi_esp32_server?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&nullCatalogMeansCurrent=true&connectTimeout=30000&socketTimeout=30000"
+      SPRING_DATASOURCE_DRUID_USERNAME: xiaozhi
+      SPRING_DATASOURCE_DRUID_PASSWORD: ${XIAOZHI_DB_PASSWORD:?missing}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: "6379"
+      SPRING_DATA_REDIS_PASSWORD: ""
+    ports:
+      - "127.0.0.1:8002:8002"
+    volumes:
+      - /srv/fr3k/xiaozhi/uploads:/uploadfile
+    networks: [voice-private]
+    mem_limit: 2g
+    security_opt: [no-new-privileges:true]
+  server:
+    image: ghcr.io/xinnan-tech/xiaozhi-esp32-server:server_latest
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      TZ: UTC
+    ports:
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8003:8003"
+    volumes:
+      - /srv/fr3k/xiaozhi/data:/opt/xiaozhi-esp32-server/data
+      - /srv/fr3k/xiaozhi/models:/opt/xiaozhi-esp32-server/models:ro
+    networks: [voice-private]
+    mem_limit: 3g
+    security_opt: [no-new-privileges:true]
+networks:
+  voice-private: {}

@@ -1,0 +1,23 @@
+# Activate only once fr3k.dev registrar DNS A records point at the provisioned VPS.
+# The Xiaozhi manager/admin interface deliberately has no public route.
+:80 {
+    respond /healthz "FR3KD3V_EDGE_READY" 200
+    respond "Not configured" 404
+}
+git.fr3k.dev {
+    encode gzip
+    reverse_proxy 127.0.0.1:3000
+}
+voice.fr3k.dev {
+    reverse_proxy 127.0.0.1:8000
+}
+downloads.fr3k.dev {
+    root * /srv/fr3k/releases/public
+    header X-Content-Type-Options nosniff
+    file_server
+}
+ota.fr3k.dev {
+    root * /srv/fr3k/releases/ota-public
+    header X-Content-Type-Options nosniff
+    file_server
+}

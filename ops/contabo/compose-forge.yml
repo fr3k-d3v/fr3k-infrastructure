@@ -1,0 +1,59 @@
+name: fr3k-forge
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: gitea
+      POSTGRES_DB: gitea
+      POSTGRES_PASSWORD: ${GITEA_DB_PASSWORD:?missing password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - /srv/fr3k/forge/postgres:/var/lib/postgresql/data
+    networks: [forge-private]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gitea -d gitea"]
+      interval: 10s
+      timeout: 4s
+      retries: 10
+    mem_limit: 1g
+    security_opt: [no-new-privileges:true]
+  gitea:
+    image: docker.gitea.com/gitea:28.1.0
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: postgres
+      GITEA__database__HOST: db:5432
+      GITEA__database__NAME: gitea
+      GITEA__database__USER: gitea
+      GITEA__database__PASSWD: ${GITEA_DB_PASSWORD:?missing password}
+      GITEA__security__SECRET_KEY: ${GITEA_SECRET_KEY:?missing secret}
+      GITEA__security__INTERNAL_TOKEN: ${GITEA_INTERNAL_TOKEN:?missing token}
+      GITEA__server__LFS_JWT_SECRET: ${GITEA_LFS_SECRET:?missing secret}
+      GITEA__server__ROOT_URL: https://git.fr3k.dev/
+      GITEA__server__DOMAIN: git.fr3k.dev
+      GITEA__server__PROTOCOL: http
+      GITEA__server__HTTP_PORT: "3000"
+      GITEA__server__DISABLE_SSH: "true"
+      GITEA__security__INSTALL_LOCK: "true"
+      GITEA__service__DISABLE_REGISTRATION: "true"
+      GITEA__service__REQUIRE_SIGNIN_VIEW: "true"
+      GITEA__service__ENABLE_NOTIFY_MAIL: "false"
+      GITEA__api__ENABLE_SWAGGER: "false"
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - /srv/fr3k/forge/data:/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks: [forge-private]
+    mem_limit: 2g
+    security_opt: [no-new-privileges:true]
+networks:
+  forge-private:
+    internal: false
