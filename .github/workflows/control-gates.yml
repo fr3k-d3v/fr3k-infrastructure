@@ -11,9 +11,7 @@ jobs:
       - run: python -m unittest discover -s tests -v
       - run: python -m fr3k_control.pack_audit docs/source-pack/v1.1 --output evidence/pack-audit.json || test $? -eq 2
       - run: python -m fr3k_control.gate control/gates/g0.json --output evidence/g0-result.json || test $? -eq 2
-      - name: Verify committed generated evidence is fresh
-        run: |
-          git diff --exit-code -- evidence/pack-audit.json evidence/g0-result.json || {
-            echo "Generated evidence differs from committed evidence. Regenerate and commit the evidence files."
-            exit 1
-          }
+      - name: Verify static pack audit evidence unchanged
+        run: git diff --exit-code -- evidence/pack-audit.json
+      - name: Verify G0 substantive evidence unchanged and timestamp fresh
+        run: python -m fr3k_control.evidence_consistency
