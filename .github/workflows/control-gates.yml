@@ -5,10 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - run: python -m unittest discover -s tests -v
+      - name: Credential gate (working tree + every blob in history)
+        run: python -m fr3k_control.secrets_gate --repo . --history --allowlist control/secrets-allowlist.json
+      - name: "Release gate (fail-closed; BLOCKED is expected while no candidate or signing key is enrolled)"
+        run: python -m fr3k_control.release_gate --candidates release/candidates || test $? -eq 2
       - run: python -m fr3k_control.pack_audit docs/source-pack/v1.1 --output evidence/pack-audit.json || test $? -eq 2
       - run: python -m fr3k_control.gate control/gates/g0.json --output evidence/g0-result.json || test $? -eq 2
       - name: Verify committed generated evidence is fresh

@@ -1,0 +1,7 @@
+{
+  "schema": "fr3k.release.state/v1",
+  "purpose": "Anti-rollback floor. Bumped only after a release has actually been published and read back from the distribution host.",
+  "updated_at": "2026-10-26T00:00:00Z",
+  "ota": {},
+  "apk": {}
+}

@@ -1,0 +1,38 @@
+{
+  "schema": "fr3k.release.policy/v1",
+  "purpose": "Enrolment policy for the BLACKWAVE OTA manifest and Android APK pre-publication gate. Nothing publishes unless it appears here.",
+  "owner": "Michael Insch",
+  "publish": {
+    "allowed_roots": [
+      "/srv/fr3k/releases/public/android/blackwave",
+      "/srv/fr3k/releases/ota-public"
+    ]
+  },
+  "ota": {
+    "manifest_schema": "fr3k.blackwave.ota.manifest/v1",
+    "channels": ["stable", "canary"],
+    "devices": {
+      "t-deck-plus": {
+        "hardware_revisions": [],
+        "note": "Populate only after the real firmware/OTA inspection in docs/REALITY_RECONCILIATION.md is done; empty list means no revision is accepted yet."
+      },
+      "t-watch-ultra": {
+        "hardware_revisions": [],
+        "note": "Same rule as t-deck-plus: an empty revision list accepts nothing."
+      }
+    },
+    "signing_keys": {},
+    "key_note": "No OTA signing key is enrolled. Enrolment requires the public key file (control/keys/<id>.pub.pem), a not_after date and a review; private keys never enter this repository and never touch the VPS."
+  },
+  "apk": {
+    "apksigner": "apksigner",
+    "packages": {
+      "dev.fr3k.blackwave": {
+        "allowed_abis": ["arm64-v8a", "armeabi-v7a"],
+        "min_version_code": 1
+      }
+    },
+    "trusted_signer_cert_sha256": [],
+    "cert_note": "Empty list means no APK release can pass: key continuity has to be pinned from a real signed build, and no signed build exists yet (D6)."
+  }
+}
