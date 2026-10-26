@@ -1,0 +1,19 @@
+[Unit]
+Description=FR3K Contabo encrypted backup + off-VPS publish
+Documentation=https://github.com/fr3kchy/fr3k-infrastructure/blob/main/docs/CONTABO_BACKUP_RESTORE_20261026.md
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+# Runs as root: it reads container environment through `docker exec` and writes
+# root-only key material. Never log the passphrase or dump contents.
+Environment=PATH=/usr/local/bin:/usr/bin:/bin:/root/.local/bin
+ExecStart=/usr/local/sbin/contabo-backup.sh
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+# Backup must not be killed by a slow dump, but must not run forever either.
+TimeoutStartSec=1800
+StandardOutput=journal
+StandardError=journal

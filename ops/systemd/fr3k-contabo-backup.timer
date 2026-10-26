@@ -1,0 +1,14 @@
+[Unit]
+Description=Daily FR3K Contabo encrypted backup (off-VPS)
+
+[Timer]
+# Local-time 03:20 with a randomised delay so backups never stack against the
+# nightly apt/logrotate window.
+OnCalendar=*-*-* 03:20:00
+RandomizedDelaySec=20m
+Persistent=true
+AccuracySec=1m
+Unit=fr3k-contabo-backup.service
+
+[Install]
+WantedBy=timers.target
