@@ -133,7 +133,9 @@ RULES: tuple[Rule, ...] = (
         validate=True,
     ),
     Rule("dotenv-file", re.compile(r"(?m)^[A-Z0-9_]{3,}\s*=\s*\S+"), "dotenv-style file with live values"),
-    Rule("android-keystore-file", re.compile(r"\A(?:binary|text)\z"), "Android/Java signing keystore"),
+    # Path-scoped rule placeholder: this pattern never matches content; the finding is
+    # produced by PATH_RULES below. (It must stay 3.11-compatible: no \z anchor.)
+    Rule("android-keystore-file", re.compile(r"(?!x)x"), "Android/Java signing keystore"),
     Rule("apk-signing-properties", re.compile(r"(?im)^\s*(?:storePassword|keyPassword|storeFile)\s*="),
          "APK keystore credentials"),
 )
