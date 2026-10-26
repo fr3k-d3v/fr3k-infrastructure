@@ -1,0 +1,20 @@
+2026-10-26T12:21:14Z drill_dir=/var/lib/fr3k-hermes/cache/scratch/restore-drill-20261026T122114Z
+2026-10-26T12:21:15Z fetched bundle from github fr3k-d3v/fr3k-contabo-backup (765577 bytes)
+2026-10-26T12:21:15Z bundle_sha256=cd3e177452b58d4767ab481b0e7686056c4169bf292a06b7fd638a2998f723f7 (matches published SHA256SUMS)
+2026-10-26T12:21:16Z decrypt=OK
+2026-10-26T12:21:16Z extract=OK
+2026-10-26T12:21:16Z member_checksums=OK (8 members)
+2026-10-26T12:21:16Z reading production row counts (read-only)
+2026-10-26T12:21:17Z production_tables=30
+2026-10-26T12:21:18Z production_pg_tables=117
+2026-10-26T12:21:19Z production_redis_dbsize=39
+2026-10-26T12:21:45Z mysql_restore_target_ready=yes
+2026-10-26T12:21:46Z mysql_dump_load=OK
+2026-10-26T12:21:46Z MYSQL_RESTORE_VERDICT: PASS (30 tables, 0 mismatches, 694 rows)
+2026-10-26T12:21:54Z REDIS_RESTORE_VERDICT: PASS (prod=39 restored=39)
+2026-10-26T12:22:06Z pg_restore_target_ready=yes
+2026-10-26T12:22:09Z pg_dump_restore=OK
+2026-10-26T12:22:10Z PG_RESTORE_VERDICT: PASS (117 tables, 0 row-count mismatches)
+2026-10-26T12:22:12Z cleanup=OK (0 restore containers remain)
+2026-10-26T12:22:12Z DRILL_DIR=/var/lib/fr3k-hermes/cache/scratch/restore-drill-20261026T122114Z
+2026-10-26T12:22:12Z OVERALL=PASS
