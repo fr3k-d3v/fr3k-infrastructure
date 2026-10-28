@@ -13,7 +13,13 @@ jobs:
       - run: python -m fr3k_control.gate control/gates/g0.json --output evidence/g0-result.json || test $? -eq 2
       - name: Verify committed generated evidence is fresh
         run: |
-          git diff --exit-code -- evidence/pack-audit.json evidence/g0-result.json || {
+          git diff --exit-code -- evidence/pack-audit.json || {
+            echo "Generated evidence differs from committed evidence. Regenerate and commit the evidence files."
+            exit 1
+          }
+          # evaluated_at is a wall-clock timestamp, not gate content: ignore that
+          # line, every other byte of g0-result.json must still match.
+          git diff --exit-code --ignore-matching-lines='"evaluated_at"' -- evidence/g0-result.json || {
             echo "Generated evidence differs from committed evidence. Regenerate and commit the evidence files."
             exit 1
           }
